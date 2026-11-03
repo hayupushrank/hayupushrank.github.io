@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>An-Nabi Shallu 'Alaih - Qasidah & Sholawat</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for Arabic Typography & General UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        },
+                        amber: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        arabic: ['"Amiri"', '"Scheherazade New"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .arabic-text {
+            font-family: 'Amiri', 'Scheherazade New', serif;
+            line-height: 2.2;
+            direction: rtl;
+        }
+        .bg-pattern {
+            background-color: #064e3b;
+            background-image: radial-gradient(#10b981 0.75px, transparent 0.75px), radial-gradient(#10b981 0.75px, #064e3b 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            opacity: 0.95;
+        }
+        /* Print Specific Styles */
+        @media print {
+            header, .no-print, #toast, footer {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            main {
+                margin-top: 0 !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+            }
+            .print-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+            .arabic-text {
+                color: black !important;
+            }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300 min-h-screen flex flex-col">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-emerald-800 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 pointer-events-none">
+        <i class="fa-solid fa-circle-check text-amber-400 text-xl"></i>
+        <span id="toast-msg">Teks berhasil disalin!</span>
+    </div>
+
+    <!-- Printable Title Header (Only visible on print/PDF output) -->
+    <div class="hidden print-header py-4 border-b border-gray-300">
+        <h1 class="arabic-text text-3xl font-bold">النَّبِي صَلُّوا عَلَيْهِ</h1>
+        <h2 class="text-xl font-bold">An-Nabi Shallu 'Alaih</h2>
+    </div>
+
+    <!-- Header / Banner Section -->
+    <header class="bg-pattern text-white pt-10 pb-16 px-4 sm:px-6 lg:px-8 shadow-xl relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-950/40 to-emerald-950"></div>
+        <div class="max-w-4xl mx-auto relative z-10 text-center space-y-4">
+            
+            <!-- Quick Action Bar -->
+            <div class="flex justify-between items-center mb-6">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-800/80 text-emerald-200 border border-emerald-600/50">
+                    <i class="fa-solid fa-book-open"></i> Qasidah / Sholawat
+                </span>
+                
+                <div class="flex items-center gap-2">
+                    <!-- Light / Dark Theme Switcher Button -->
+                    <button id="theme-toggle" class="p-2.5 rounded-full bg-emerald-900/80 hover:bg-emerald-800 text-amber-300 transition-colors border border-emerald-700/50 focus:outline-none flex items-center gap-2 text-xs px-3" title="Ubah Mode Tampilan (Terang / Gelap)">
+                        <i class="fa-solid fa-sun text-sm hidden dark:block"></i>
+                        <i class="fa-solid fa-moon text-sm dark:hidden"></i>
+                        <span class="hidden sm:inline font-medium text-amber-200" id="theme-text">Mode Terang</span>
+                    </button>
+                </div>
+            </div>
+
+            <h1 class="arabic-text text-4xl sm:text-5xl md:text-6xl text-amber-300 font-bold leading-relaxed drop-shadow-md">
+                النَّبِي صَلُّوا عَلَيْهِ
+            </h1>
+            <h2 class="text-2xl sm:text-3xl font-bold tracking-wide text-emerald-100">
+                An-Nabi Shallu 'Alaih
+            </h2>
+            <p class="text-emerald-200 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+                "Nabi Muhammad SAW, bersholawatlah atasnya. Rahmat Allah dicurahkan kepadanya..."
+            </p>
+
+            <!-- Decorative Ornament Divider -->
+            <div class="flex items-center justify-center space-x-4 pt-2">
+                <div class="h-px bg-gradient-to-r from-transparent via-amber-400 to-transparent w-24 sm:w-32"></div>
+                <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+                <i class="fa-solid fa-mosque text-amber-400 text-lg"></i>
+                <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+                <div class="h-px bg-gradient-to-r from-transparent via-amber-400 to-transparent w-24 sm:w-32"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20 flex-grow w-full mb-12">
+        
+        <!-- Control Toolbar Card -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 shadow-xl border border-slate-200/80 dark:border-slate-800 mb-8 backdrop-blur-md no-print">
+            <div class="flex flex-wrap gap-4 items-center justify-between">
+                
+                <!-- Search Box -->
+                <div class="relative flex-1 min-w-[200px]">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="search-input" placeholder="Cari bait / kata / arti..." class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-0 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none dark:text-white transition-all">
+                </div>
+
+                <!-- Controls Group -->
+                <div class="flex items-center flex-wrap gap-2 sm:gap-3">
+                    <!-- Font Size Adjustment -->
+                    <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl p-1 border border-slate-200 dark:border-slate-700">
+                        <button id="btn-dec-font" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold transition" title="Kecilkan Teks">A-</button>
+                        <span class="text-xs px-2 text-slate-500 dark:text-slate-400 font-medium">Ukuran</span>
+                        <button id="btn-inc-font" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold transition" title="Besarkan Teks">A+</button>
+                    </div>
+
+                    <!-- Display Mode Toggles -->
+                    <button id="btn-toggle-translation" class="px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-language"></i> Terjemahan
+                    </button>
+
+                    <!-- Print to PDF Button -->
+                    <button id="btn-print" class="px-3 py-2 rounded-xl text-xs font-semibold bg-amber-500 text-white hover:bg-amber-600 transition flex items-center gap-1.5 shadow-sm" title="Cetak / Simpan PDF">
+                        <i class="fa-solid fa-file-pdf text-sm"></i> PDF / Cetak
+                    </button>
+
+                    <!-- Full Copy Button -->
+                    <button id="btn-copy-all" class="p-2 rounded-xl text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Salin Seluruh Teks">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verses Container -->
+        <div id="verses-container" class="space-y-6">
+            <!-- Dynamic Content loaded via JS -->
+        </div>
+
+        <!-- No Results Fallback -->
+        <div id="no-results" class="hidden text-center py-12 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <i class="fa-solid fa-book-open-reader text-4xl text-slate-300 dark:text-slate-700 mb-3"></i>
+            <p class="text-slate-500 dark:text-slate-400">Bait tidak ditemukan. Coba kata kunci lain.</p>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-center py-6 px-4 border-t border-slate-800 mt-auto text-sm">
+        <div class="max-w-4xl mx-auto space-y-2">
+            <p class="font-medium text-slate-300">Qasidah An-Nabi Shallu 'Alaih (النَّبِي صَلُّوا عَلَيْهِ)</p>
+            <p class="text-xs text-slate-500">Didesain dengan kemudahan pembacaan teks Arab, Latin, dan Terjemahan.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Data & Logic -->
+    <script>
+        // Verses Data digitized directly from the document image
+        const stanzaData = [
+            {
+                id: 1,
+                title: "Bait Utama / Refrain",
+                isRefrain: true,
+                right: {
+                    arabic: "النَّبِي صَلُّوا عَلَيْهِ",
+                    latin: "An-Nabî shallû 'alaih",
+                    translation: "Nabi SAW, bersholawatlah kalian atasnya"
+                },
+                left: {
+                    arabic: "صَلَوَاتُ اللهِ عَلَيْهِ",
+                    latin: "Shalawâtullâhi 'alaih",
+                    translation: "Rahmat-rahmat Allah dicurahkan kepadanya"
+                }
+            },
+            {
+                id: 2,
+                right: {
+                    arabic: "وَيَنَالُ الْبَرَكَاتِ",
+                    latin: "Wa yanâlul barakât",
+                    translation: "Dan akan memperoleh keberkahan"
+                },
+                left: {
+                    arabic: "كُلُّ مَنْ صَلَّى عَلَيْهِ",
+                    latin: "Kullu man shallâ 'alaih",
+                    translation: "Setiap orang yang bersholawat kepadanya"
+                }
+            },
+            {
+                id: 3,
+                right: {
+                    arabic: "النَّبِي يَا حَاضِرِيْن",
+                    latin: "An-Nabî yâ hâdhirîn",
+                    translation: "Wahai orang-orang yang hadir, inilah Nabi"
+                },
+                left: {
+                    arabic: "إِعْلَمُوْا عِلْمَ الْيَقِيْن",
+                    latin: "I'lamû 'ilmal yaqîn",
+                    translation: "Ketahuilah dengan ilmu keyakinan yang mantap"
+                }
+            },
+            {
+                id: 4,
+                right: {
+                    arabic: "إِنَّ رَبَّ الْعَالَمِيْن",
+                    latin: "Inna Rabbal 'âlamîn",
+                    translation: "Bahwasanya Tuhan semesta alam"
+                },
+                left: {
+                    arabic: "فَرَضَ الصَّلَوَاتِ عَلَيْهِ",
+                    latin: "Faradhash-shalawâti 'alaih",
+                    translation: "Mewajibkan sholawat kepadanya"
+                }
+            },
+            {
+                id: 5,
+                right: {
+                    arabic: "النَّبِي يَا مَنْ حَضَرْ",
+                    latin: "An-Nabî yâ man hadhar",
+                    translation: "Wahai siapa saja yang hadir, inilah Nabi"
+                },
+                left: {
+                    arabic: "النَّبِي خَيْرُ الْبَشَرْ",
+                    latin: "An-Nabî khairul bashar",
+                    translation: "Nabi adalah sebaik-baik manusia"
+                }
+            },
+            {
+                id: 6,
+                right: {
+                    arabic: "وَدَنَا لَهُ الْقَمَرْ",
+                    latin: "Wa danâ lahul qamar",
+                    translation: "Dan bulan pun mendekat kepadanya"
+                },
+                left: {
+                    arabic: "وَالْغَزَلُ سَلَّمْ عَلَيْهِ",
+                    latin: "Wal ghazalu sallam 'alaih",
+                    translation: "Serta kijang mengucapkan salam kepadanya"
+                }
+            },
+            {
+                id: 7,
+                right: {
+                    arabic: "النَّبِي يَا أَهْلَ الْعَرَبْ",
+                    latin: "An-Nabî yâ ahlal 'Arab",
+                    translation: "Wahai kaum Arab, inilah Sang Nabi"
+                },
+                left: {
+                    arabic: "النَّبِي مَدْحُهُ طَرَبْ",
+                    latin: "An-Nabî madhuhû tharab",
+                    translation: "Memujinya membawa kegembiraan jiwa"
+                }
+            },
+            {
+                id: 8,
+                right: {
+                    arabic: "الْحَبِيْبُ عَالِي النَّسَبْ",
+                    latin: "Al-Habîbu 'âlin-nasab",
+                    translation: "Kekasih Allah yang mulia nasabnya"
+                },
+                left: {
+                    arabic: "صَلَوَاتُ اللهِ عَلَيْهِ",
+                    latin: "Shalawâtullâhi 'alaih",
+                    translation: "Rahmat-rahmat Allah dicurahkan kepadanya"
+                }
+            },
+            {
+                id: 9,
+                right: {
+                    arabic: "النَّبِي ذَاَك العَرُوْس",
+                    latin: "An-Nabî dzâkal 'arûs",
+                    translation: "Nabi bagaikan pengantin yang berseri"
+                },
+                left: {
+                    arabic: "ذِكْرُهُ يُحْيِي النُّفُوْس",
+                    latin: "Dzikruhû yuhyin-nufûs",
+                    translation: "Mengingatnya menghidupkan jiwa"
+                }
+            },
+            {
+                id: 10,
+                right: {
+                    arabic: "النَّصَارَى وَالْمَجُوْس",
+                    latin: "An-Nashârâ wal Majûs",
+                    translation: "Kaum Nasrani dan Majusi"
+                },
+                left: {
+                    arabic: "أَسْلَمُوْا بَيْنَ يَدَيْهِ",
+                    latin: "Aslamû baina yadaih",
+                    translation: "Telah berserah diri/masuk Islam di hadapannya"
+                }
+            },
+            {
+                id: 11,
+                right: {
+                    arabic: "الْحَسَن ثُمَّ الْحُسَيْن",
+                    latin: "Al-Hasan tsummal Husain",
+                    translation: "Al-Hasan kemudian Al-Husain"
+                },
+                left: {
+                    arabic: "لِلنَّبِي قُرَّةُ الْعَيْن",
+                    latin: "Lin-nabî qurratul 'ain",
+                    translation: "Merupakan penyejuk mata bagi Sang Nabi"
+                }
+            },
+            {
+                id: 12,
+                right: {
+                    arabic: "نُوْرُهُمْ كَالْكَوْكَبَيْن",
+                    latin: "Nûruhum kal kaukabain",
+                    translation: "Cahaya mereka laksana dua bintang benderang"
+                },
+                left: {
+                    arabic: "جَدُّهُمْ صَلُّوا عَلَيْهِ",
+                    latin: "Jadduhum shallû 'alaih",
+                    translation: "Kakek mereka (Nabi), bersholawatlah padanya"
+                }
+            },
+            {
+                id: 13,
+                right: {
+                    arabic: "النَّبِي ذَاكَ الْمَلِيْح",
+                    latin: "An-Nabî dzâkal malîh",
+                    translation: "Nabi yang elok dan indah rupanya"
+                },
+                left: {
+                    arabic: "قَوْلُهُ قَوْلٌ صَحِيْح",
+                    latin: "Qauluhû qaulun shahîh",
+                    translation: "Perkataannya adalah kebenaran yang sejati"
+                }
+            },
+            {
+                id: 14,
+                right: {
+                    arabic: "وَالْقُرْآنُ شَيْءٌ فَصِيْح",
+                    latin: "Wal Qur-ânu syai-un fasîh",
+                    translation: "Dan Al-Qur'an adalah firman yang amat fasih"
+                },
+                left: {
+                    arabic: "الَّذِي أُنْزِلَ عَلَيْهِ",
+                    latin: "Alladzî unzila 'alaih",
+                    translation: "Yang diwahyukan kepadanya"
+                }
+            }
+        ];
+
+        // App State
+        let currentFontSize = 28; // default font size for Arabic (in px)
+        let showTranslations = true;
+
+        // DOM Elements
+        const versesContainer = document.getElementById('verses-container');
+        const searchInput = document.getElementById('search-input');
+        const noResults = document.getElementById('no-results');
+        const btnIncFont = document.getElementById('btn-inc-font');
+        const btnDecFont = document.getElementById('btn-dec-font');
+        const btnToggleTrans = document.getElementById('btn-toggle-translation');
+        const btnCopyAll = document.getElementById('btn-copy-all');
+        const btnPrint = document.getElementById('btn-print');
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeText = document.getElementById('theme-text');
+
+        // Theme Handling
+        function updateThemeUI() {
+            const isDark = document.documentElement.classList.contains('dark');
+            if (themeText) {
+                themeText.innerText = isDark ? 'Mode Terang' : 'Mode Gelap';
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            updateThemeUI();
+        });
+
+        // Print functionality
+        btnPrint.addEventListener('click', () => {
+            window.print();
+        });
+
+        // Render Function
+        function renderVerses(filteredData = stanzaData) {
+            versesContainer.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            filteredData.forEach((stanza) => {
+                const card = document.createElement('div');
+                card.className = `group bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-all border ${
+                    stanza.isRefrain 
+                        ? 'border-amber-400/60 dark:border-amber-500/40 bg-gradient-to-r from-amber-50/40 via-white to-amber-50/40 dark:from-amber-950/20 dark:via-slate-900 dark:to-amber-950/20' 
+                        : 'border-slate-200/80 dark:border-slate-800'
+                }`;
+
+                card.innerHTML = `
+                    <!-- Card Top Header -->
+                    <div class="flex items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-800/80 pb-2">
+                        <span class="inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full ${
+                            stanza.isRefrain 
+                                ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300' 
+                                : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                        }">
+                            Bait ${stanza.id} ${stanza.isRefrain ? '• Reff' : ''}
+                        </span>
+                        
+                        <div class="flex items-center gap-2">
+                            <button onclick="copyStanza(${stanza.id})" class="text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition p-1" title="Salin Bait Ini">
+                                <i class="fa-regular fa-copy text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Arabic Columns Layout (2-Column Grid matching classical kitāb style) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                        
+                        <!-- Right Column (Sadr / First Hemistich) -->
+                        <div class="text-center md:text-right space-y-2 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800/60 pb-4 md:pb-0 md:pr-4">
+                            <p class="arabic-text text-slate-900 dark:text-emerald-50 font-bold transition-all duration-200" style="font-size: ${currentFontSize}px">
+                                ${stanza.right.arabic}
+                            </p>
+                            <p class="text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-400 tracking-wide">
+                                ${stanza.right.latin}
+                            </p>
+                            ${showTranslations ? `<p class="text-xs text-slate-500 dark:text-slate-400 italic">${stanza.right.translation}</p>` : ''}
+                        </div>
+
+                        <!-- Left Column (Ajud / Second Hemistich) -->
+                        <div class="text-center md:text-right space-y-2">
+                            <p class="arabic-text text-slate-900 dark:text-emerald-50 font-bold transition-all duration-200" style="font-size: ${currentFontSize}px">
+                                ${stanza.left.arabic}
+                            </p>
+                            <p class="text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-400 tracking-wide">
+                                ${stanza.left.latin}
+                            </p>
+                            ${showTranslations ? `<p class="text-xs text-slate-500 dark:text-slate-400 italic">${stanza.left.translation}</p>` : ''}
+                        </div>
+
+                    </div>
+                `;
+
+                versesContainer.appendChild(card);
+            });
+        }
+
+        // Font Resize Actions
+        btnIncFont.addEventListener('click', () => {
+            if (currentFontSize < 44) {
+                currentFontSize += 3;
+                renderVerses(getFilteredData());
+            }
+        });
+
+        btnDecFont.addEventListener('click', () => {
+            if (currentFontSize > 20) {
+                currentFontSize -= 3;
+                renderVerses(getFilteredData());
+            }
+        });
+
+        // Toggle Translations
+        btnToggleTrans.addEventListener('click', () => {
+            showTranslations = !showTranslations;
+            btnToggleTrans.classList.toggle('bg-emerald-600');
+            btnToggleTrans.classList.toggle('text-white');
+            renderVerses(getFilteredData());
+        });
+
+        // Search Filter
+        function getFilteredData() {
+            const query = searchInput.value.toLowerCase().trim();
+            if (!query) return stanzaData;
+
+            return stanzaData.filter(s => 
+                s.right.arabic.includes(query) || 
+                s.left.arabic.includes(query) ||
+                s.right.latin.toLowerCase().includes(query) ||
+                s.left.latin.toLowerCase().includes(query) ||
+                s.right.translation.toLowerCase().includes(query) ||
+                s.left.translation.toLowerCase().includes(query)
+            );
+        }
+
+        searchInput.addEventListener('input', () => {
+            renderVerses(getFilteredData());
+        });
+
+        // Copy Functionality
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            toastMsg.innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        window.copyStanza = function(id) {
+            const stanza = stanzaData.find(s => s.id === id);
+            if (!stanza) return;
+
+            const textToCopy = `${stanza.right.arabic}  |  ${stanza.left.arabic}\n${stanza.right.latin} - ${stanza.left.latin}\n(${stanza.right.translation} / ${stanza.left.translation})`;
+            
+            copyToClipboard(textToCopy);
+            showToast(`Bait ${id} berhasil disalin!`);
+        };
+
+        btnCopyAll.addEventListener('click', () => {
+            let fullText = "النَّبِي صَلُّوا عَلَيْهِ (An-Nabi Shallu 'Alaih)\n\n";
+            stanzaData.forEach(s => {
+                fullText += `${s.right.arabic}  |  ${s.left.arabic}\n${s.right.latin} - ${s.left.latin}\n\n`;
+            });
+            copyToClipboard(fullText);
+            showToast("Seluruh bait berhasil disalin!");
+        });
+
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+
+        // Initial Load
+        updateThemeUI();
+        renderVerses();
+    </script>
+</body>
+</html>
