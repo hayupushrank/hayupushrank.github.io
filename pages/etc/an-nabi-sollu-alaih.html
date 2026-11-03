@@ -202,7 +202,7 @@
                 "Nabi Muhammad SAW, bersholawatlah atasnya. Rahmat Allah dicurahkan kepadanya..."
             </p>
             <h2 class="text-2xl sm:text-3xl font-bold tracking-wide text-emerald-100">
-                Persembahan Untuk H. ANton Kesayangan Eyang W.S.
+                Persembahan Untuk H. Anton Kesayangan Eyang W.H.
             </h2>
             <!-- Decorative Ornament Divider -->
             <div class="flex items-center justify-center space-x-4 pt-2">
@@ -240,6 +240,11 @@
                     <!-- Display Mode Toggles -->
                     <button id="btn-toggle-translation" class="px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-language"></i> Terjemahan
+                    </button>
+
+                    <!-- Text to Speech Read All Button -->
+                    <button id="btn-play-all" class="px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition flex items-center gap-1.5 shadow-sm" title="Putar Suara (TTS)">
+                        <i class="fa-solid fa-volume-high text-sm"></i> <span id="play-all-label">Putar Semua</span>
                     </button>
 
                     <!-- Print to PDF Button -->
@@ -469,6 +474,8 @@
         // App State
         let currentFontSize = 28; // default font size for Arabic (in px)
         let showTranslations = true;
+        let isPlayingAudio = false;
+        let activeAudioStanzaId = null;
 
         // DOM Elements
         const versesContainer = document.getElementById('verses-container');
@@ -479,8 +486,113 @@
         const btnToggleTrans = document.getElementById('btn-toggle-translation');
         const btnCopyAll = document.getElementById('btn-copy-all');
         const btnPrint = document.getElementById('btn-print');
+        const btnPlayAll = document.getElementById('btn-play-all');
+        const playAllLabel = document.getElementById('play-all-label');
         const themeToggle = document.getElementById('theme-toggle');
         const themeText = document.getElementById('theme-text');
+
+        // Speech Synthesis (TTS) Helper
+        const synth = window.speechSynthesis;
+
+        function speakText(text, lang = 'ar-SA', onEndCallback = null) {
+            if (!synth) {
+                showToast("Pengucapan suara tidak didukung browser ini.");
+                if (onEndCallback) onEndCallback();
+                return;
+            }
+
+            synth.cancel(); // Stop ongoing speech
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            utterance.rate = 0.85; // Slightly slower for clear Arabic pronunciation
+
+            // Find best Arabic voice if available
+            const voices = synth.getVoices();
+            const arVoice = voices.find(v => v.lang.startsWith('ar'));
+            if (arVoice) {
+                utterance.voice = arVoice;
+            }
+
+            utterance.onend = () => {
+                if (onEndCallback) onEndCallback();
+            };
+
+            utterance.onerror = () => {
+                if (onEndCallback) onEndCallback();
+            };
+
+            synth.speak(utterance);
+        }
+
+        window.stopAudio = function() {
+            if (synth) synth.cancel();
+            isPlayingAudio = false;
+            activeAudioStanzaId = null;
+            if (playAllLabel) playAllLabel.innerText = "Putar Semua";
+            btnPlayAll.classList.remove('bg-red-600', 'hover:bg-red-700');
+            btnPlayAll.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+            renderVerses(getFilteredData());
+        };
+
+        window.playStanzaTTS = function(id) {
+            if (activeAudioStanzaId === id) {
+                stopAudio();
+                return;
+            }
+
+            stopAudio();
+            const stanza = stanzaData.find(s => s.id === id);
+            if (!stanza) return;
+
+            activeAudioStanzaId = id;
+            renderVerses(getFilteredData());
+
+            const textToSpeak = `${stanza.right.arabic}. ${stanza.left.arabic}`;
+            speakText(textToSpeak, 'ar-SA', () => {
+                activeAudioStanzaId = null;
+                renderVerses(getFilteredData());
+            });
+        };
+
+        // Play All Playlist Loop
+        btnPlayAll.addEventListener('click', () => {
+            if (isPlayingAudio) {
+                stopAudio();
+                return;
+            }
+
+            const dataToPlay = getFilteredData();
+            if (dataToPlay.length === 0) return;
+
+            isPlayingAudio = true;
+            playAllLabel.innerText = "Hentikan";
+            btnPlayAll.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+            btnPlayAll.classList.add('bg-red-600', 'hover:bg-red-700');
+
+            let currentIndex = 0;
+
+            function playNext() {
+                if (!isPlayingAudio || currentIndex >= dataToPlay.length) {
+                    stopAudio();
+                    return;
+                }
+
+                const stanza = dataToPlay[currentIndex];
+                activeAudioStanzaId = stanza.id;
+                renderVerses(dataToPlay);
+
+                const textToSpeak = `${stanza.right.arabic}. ${stanza.left.arabic}`;
+                speakText(textToSpeak, 'ar-SA', () => {
+                    currentIndex++;
+                    if (isPlayingAudio) {
+                        setTimeout(playNext, 400);
+                    }
+                });
+            }
+
+            playNext();
+        });
 
         // Theme Handling
         function updateThemeUI() {
@@ -512,11 +624,14 @@
             }
 
             filteredData.forEach((stanza) => {
+                const isPlayingThis = activeAudioStanzaId === stanza.id;
                 const card = document.createElement('div');
                 card.className = `group bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-all border ${
-                    stanza.isRefrain 
-                        ? 'border-amber-400/60 dark:border-amber-500/40 bg-gradient-to-r from-amber-50/40 via-white to-amber-50/40 dark:from-amber-950/20 dark:via-slate-900 dark:to-amber-950/20' 
-                        : 'border-slate-200/80 dark:border-slate-800'
+                    isPlayingThis
+                        ? 'ring-2 ring-emerald-500 border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/30'
+                        : stanza.isRefrain 
+                            ? 'border-amber-400/60 dark:border-amber-500/40 bg-gradient-to-r from-amber-50/40 via-white to-amber-50/40 dark:from-amber-950/20 dark:via-slate-900 dark:to-amber-950/20' 
+                            : 'border-slate-200/80 dark:border-slate-800'
                 }`;
 
                 card.innerHTML = `
@@ -530,7 +645,11 @@
                             Bait ${stanza.id} ${stanza.isRefrain ? '• Reff' : ''}
                         </span>
                         
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 no-print">
+                            <!-- Play TTS Button -->
+                            <button onclick="playStanzaTTS(${stanza.id})" class="p-1 text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition" title="Dengarkan Suara (TTS)">
+                                <i class="fa-solid ${isPlayingThis ? 'fa-circle-stop text-red-500' : 'fa-volume-high'} text-sm"></i>
+                            </button>
                             <button onclick="copyStanza(${stanza.id})" class="text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition p-1" title="Salin Bait Ini">
                                 <i class="fa-regular fa-copy text-sm"></i>
                             </button>
